@@ -129,9 +129,11 @@ def backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resum
                     'state': state_dict_to_cpu(best_val[2]),
                     'optim': optimizer.state_dict(),
                     'scheduler': scheduler.state_dict(),
-                }, save_name)
-            resume = save_name
-    
+                }, save_name)    #backbone = mobilenetv3_large(num_local_features=num_local_features)
+    #transformer = MatchERT(d_global=num_global_features, d_model=num_local_features, 
+    #        nhead=ert_nhead, num_encoder_layers=ert_num_encoder_layers, 
+    #        dim_feedforward=ert_dim_feedforward, dropout=ert_dropout, 
+    #        activation=ert_activation, normalize_before=ert_normalize_before)
     print(f"Finished training the backbone")
 
 #################################################################################################################################################
@@ -391,6 +393,42 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
     pprint(metrics)
     best_val = (0, metrics, deepcopy(model.state_dict()))
 
+    torch.manual_seed(seed)
+    # saving
+    save_name = osp.join(temp_dir, 
+            '{}_{}.pt'.format(
+                        ex.current_run.config['model']['arch'],
+                        ex.current_run.config['dataset']['name']
+                    )
+            )
+    os.makedirs(temp_dir, exist_ok=True)
+
+    for epoch in range(epochs):
+        if cudnn_flag == 'benchmark':
+            setattr(cudnn, cudnn_flag, True)
+
+        train_rerank(model=model, loader=loaders.train, class_loss=class_loss, optimizer=optimizer, scheduler=scheduler, epoch=epoch, ex=ex)
+
+        if cudnn_flag == 'benchmark':
+            setattr(cudnn, cudnn_flag, False)
+        metrics = eval_function()[0]
+        print('Validation [{:03d}]'.format(epoch)), pprint(metrics)
+        ex.log_scalar('val.recall@1', metrics[1], step=epoch + 1)
+
+        if metrics[1] >= best_val[1][1]:
+            best_val = (epoch + 1, metrics, deepcopy(model.state_dict()))
+            torch.save(
+                {
+                    'state': state_dict_to_cpu(best_val[2]),
+                    'optim': optimizer.state_dict(),
+                    'scheduler': scheduler.state_dict(),
+                }, save_name)
+
+    # logging
+    ex.info['recall'] = best_val[1]
+    ex.add_artifact(save_name)
+
+    return best_val[1][1]
 
 @ex.automain
 def main(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds):

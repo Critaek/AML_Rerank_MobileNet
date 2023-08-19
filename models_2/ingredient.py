@@ -43,11 +43,6 @@ def resnet50():
 def get_model(
         num_classes, arch, pretrained, num_global_features, norm_layer, detach, remap, normalize, normalize_weight, set_bn_eval, dropout, num_local_features, freeze_backbone,
         ert_seq_len, ert_dim_feedforward, ert_nhead, ert_num_encoder_layers, ert_dropout, ert_activation, ert_normalize_before):
-    #backbone = mobilenetv3_large(num_local_features=num_local_features)
-    #transformer = MatchERT(d_global=num_global_features, d_model=num_local_features, 
-    #        nhead=ert_nhead, num_encoder_layers=ert_num_encoder_layers, 
-    #        dim_feedforward=ert_dim_feedforward, dropout=ert_dropout, 
-    #        activation=ert_activation, normalize_before=ert_normalize_before)
     network = Network(num_global_features=num_global_features,
                       num_local_features=num_local_features,
                       ert_dim_feedforward=ert_dim_feedforward,

@@ -89,13 +89,13 @@ def train_rerank(model: nn.Module,
 
         ##################################################
         ## extract features
-        l = model(batch)[2]
+        l = model(batch)
         anchors   = l[0::3]
         positives = l[1::3]
         negatives = l[2::3]
         #print(f"anchors: {anchors.size()}, positives: {positives.size()}, negatives: {negatives.size()}")
-        p_logits, _, _ = model(None, True, src_global=None, src_local=anchors, tgt_global=None, tgt_local=positives)
-        n_logits, _, _ = model(None, True, src_global=None, src_local=anchors, tgt_global=None, tgt_local=negatives)
+        p_logits = model(None, True, src_global=None, src_local=anchors, tgt_global=None, tgt_local=positives)
+        n_logits = model(None, True, src_global=None, src_local=anchors, tgt_global=None, tgt_local=negatives)
         logits = torch.cat([p_logits, n_logits], 0)
 
         bsize = logits.size(0)
@@ -112,8 +112,8 @@ def train_rerank(model: nn.Module,
         train_accs.append(acc)
 
         if not (i + 1) % 20:
-            step = epoch + i / loader_length
-            print('step/loss/accu/lr:', step, train_losses.last_avg.item(), train_accs.last_avg.item(), scheduler.get_last_lr()[0])
+            print(f"Loss at batch {i+1}: {loss.item()}")
+            print(f"Logits: {logits}")
 
     scheduler.step()
 
