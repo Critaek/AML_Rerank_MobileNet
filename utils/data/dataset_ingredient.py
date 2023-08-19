@@ -23,8 +23,8 @@ data_ingredient = Ingredient('dataset')
 def config():
     name = 'sop'
     data_path = 'data/Stanford_Online_Products'
-    train_folder = '/home/cristiano/Desktop/small/train'
-    test_folder = '/home/cristiano/Desktop/small/val'
+    train_folder = '/content/drive/MyDrive/small/train'
+    test_folder = '/content/drive/MyDrive/small/val'
 
     batch_size = 64
     sample_per_id = 2
