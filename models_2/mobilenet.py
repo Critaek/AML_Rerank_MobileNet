@@ -163,7 +163,7 @@ class MobileNetV3(nn.Module):
     def forward(self, x):
         x = self.features(x)
         print(x.shape)
-        self.remap_local(x)
+        x = self.remap_local(x)
         print(x.shape)
         #x = self.conv(x)
         #x = self.avgpool(x)
