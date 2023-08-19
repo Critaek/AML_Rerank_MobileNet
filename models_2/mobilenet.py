@@ -146,7 +146,7 @@ class MobileNetV3(nn.Module):
             input_channel = output_channel
         self.features = nn.Sequential(*layers)
         # building last several layers
-        #self.remap_local = nn.Conv2d(self.backbone_features, num_local_features, kernel_size=1, stride=1, padding=0)
+        self.remap_local = nn.Conv2d(self.backbone_features, num_local_features, kernel_size=1, stride=1, padding=0)
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         output_channel = {'large': 1280, 'small': 1024}
         output_channel = _make_divisible(output_channel[mode] * width_mult, 8) if width_mult > 1.0 else output_channel[mode]
@@ -162,10 +162,10 @@ class MobileNetV3(nn.Module):
     def forward(self, x):
         x = self.features(x)
         print(x.shape)
+        self.remap_local(x)
+        print(x.shape)
         #x = self.conv(x)
         #x = self.avgpool(x)
-        x = x.view(x.size(0), -1)
-        print(x.shape)
         #x = self.classifier(x)
         return x
 
