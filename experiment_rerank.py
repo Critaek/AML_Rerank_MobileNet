@@ -40,7 +40,7 @@ def config():
     temp_dir = osp.join('logs', 'temp')
     no_bias_decay = False
     resume = None
-    cache_nn_inds = 'rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl'
+    cache_nn_inds = '/content/AML_Rerank_MobileNet/rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl'
     seed = 459858808
 
 
@@ -274,10 +274,7 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
     save_name = osp.join(temp_dir, 
             '{}_{}.pt'.format(
                         ex.current_run.config['model']['arch'],
-                        ex.current_run.config['dataset']['name']
-                    )
-            )
-    os.makedirs(temp_dir, exist_ok=True)
+                        ex.current_run.config['dataset']['namnum_local_features
     save_name = "/home/cristiano/Desktop/transformer.pth"
 
     for epoch in range(epochs):
