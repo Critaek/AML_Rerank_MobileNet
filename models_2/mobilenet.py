@@ -133,6 +133,7 @@ class MobileNetV3(nn.Module):
         # setting of inverted residual blocks
         self.cfgs = cfgs
         assert mode in ['large', 'small']
+        self.backbone_features = 160
 
         # building first layer
         input_channel = _make_divisible(16 * width_mult, 8)
@@ -146,7 +147,7 @@ class MobileNetV3(nn.Module):
             input_channel = output_channel
         self.features = nn.Sequential(*layers)
         # building last several layers
-        #self.remap_local = nn.Conv2d(self.backbone_features, num_local_features, kernel_size=1, stride=1, padding=0)
+        self.remap_local = nn.Conv2d(self.backbone_features, num_local_features, kernel_size=1, stride=1, padding=0)
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         output_channel = {'large': 1280, 'small': 1024}
         output_channel = _make_divisible(output_channel[mode] * width_mult, 8) if width_mult > 1.0 else output_channel[mode]
