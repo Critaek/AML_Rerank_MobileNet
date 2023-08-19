@@ -9,6 +9,7 @@ class Network(nn.Module):
                  ert_dim_feedforward,
                  ert_nhead,
                  ert_num_encoder_layers, ert_dropout, ert_activation, ert_normalize_before):
+        super().__init__()
         self.backbone = mobilenetv3_large(num_local_features=num_local_features)
         self.transformer = MatchERT(d_global=num_global_features, d_model=num_local_features, 
             nhead=ert_nhead, num_encoder_layers=ert_num_encoder_layers, 
