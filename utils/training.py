@@ -334,6 +334,7 @@ def evaluate_rerank_all(model: nn.Module,
             gallery_loader: Optional[DataLoader],
             recall_ks: List[int]):
 
+    print(f"Free GPU memory before: {get_gpu_memory()}")
     model.eval()
     device = next(model.parameters()).device
     to_device = lambda x: x.to(device, non_blocking=True)
