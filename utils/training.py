@@ -326,3 +326,52 @@ def evaluate_rerank(backbone: nn.Module,
     print(f"Free GPU memory after deleting: {get_gpu_memory()}")
 
     return recalls_rerank, nn_dists, nn_inds
+
+
+def evaluate_rerank_all(model: nn.Module,
+            cache_nn_inds: torch.Tensor,
+            query_loader: DataLoader,
+            gallery_loader: Optional[DataLoader],
+            recall_ks: List[int]):
+
+    model.eval()
+    device = next(model.parameters()).device
+    to_device = lambda x: x.to(device, non_blocking=True)
+    all_query_features, all_query_labels = [], []
+    all_gallery_features, all_gallery_labels = None, None
+
+    with torch.no_grad():
+        for batch, labels, _ in tqdm(query_loader, desc='Extracting query features', leave=False, ncols=80):
+            batch, labels = map(to_device, (batch, labels))
+            features = model(batch)
+            all_query_labels.append(labels)
+            all_query_features.append(features.cpu())
+        all_query_features = torch.cat(all_query_features, 0)
+        all_query_labels = torch.cat(all_query_labels, 0)
+
+        if gallery_loader is not None:
+            all_gallery_features = []
+            all_gallery_labels = []
+            for batch, labels, _ in tqdm(gallery_loader, desc='Extracting gallery features', leave=False, ncols=80):
+                batch, labels = map(to_device, (batch, labels))
+                features = model(batch)
+                all_gallery_labels.append(labels.cpu())
+                all_gallery_features.append(features.cpu())
+
+            all_gallery_labels = torch.cat(all_gallery_labels, 0)
+            all_gallery_features = torch.cat(all_gallery_features, 0)
+
+        recall_function = partial(
+                recall_at_ks_rerank, 
+                query_features=all_query_features.cpu(), query_labels=all_query_labels.cpu(), ks=recall_ks,
+                model=model, cache_nn_inds=cache_nn_inds,
+                gallery_features=all_gallery_features, gallery_labels=all_gallery_labels
+            )
+        recalls_rerank, nn_dists, nn_inds = recall_function()
+
+    print(f"Free GPU memory before deleting: {get_gpu_memory()}")
+    del all_query_features, all_query_labels, all_gallery_features, all_gallery_labels
+    torch.cuda.empty_cache()
+    print(f"Free GPU memory after deleting: {get_gpu_memory()}")
+
+    return recalls_rerank, nn_dists, nn_inds

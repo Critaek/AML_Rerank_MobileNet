@@ -3,6 +3,7 @@ from sacred import Ingredient
 from .matcher import MatchERT
 from .resnet import resnet18
 from .mobilenet import mobilenetv3_large
+from .complete import Network
 
 model_ingredient = Ingredient('model')
 
@@ -47,5 +48,13 @@ def get_model(
             nhead=ert_nhead, num_encoder_layers=ert_num_encoder_layers, 
             dim_feedforward=ert_dim_feedforward, dropout=ert_dropout, 
             activation=ert_activation, normalize_before=ert_normalize_before)
+    network = Network(num_global_features=num_global_features,
+                      num_local_features=num_local_features,
+                      ert_dim_feedforward=ert_dim_feedforward,
+                      ert_nhead=ert_nhead,
+                      ert_num_encoder_layers=ert_num_encoder_layers,
+                      ert_dropout=ert_dropout,
+                      ert_activation=ert_activation,
+                      ert_normalize_before=ert_normalize_before)
     
-    return backbone, transformer
+    return network

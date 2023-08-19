@@ -130,7 +130,7 @@ def recall_at_ks_rerank(
     query_features: torch.Tensor,
     query_labels: torch.LongTensor,
     ks: List[int],
-    matcher: nn.Module,
+    model: nn.Module,
     cache_nn_inds: torch.Tensor,
     gallery_features: Optional[torch.Tensor] = None,
     gallery_labels: Optional[torch.Tensor] = None) -> Dict[int, float]:
@@ -169,7 +169,7 @@ def recall_at_ks_rerank(
 
     print(q_l[0]) #0,2,6
 
-    device = next(matcher.parameters()).device
+    device = next(model.parameters()).device
 
     num_samples, top_k = cache_nn_inds.size()
     top_k = min(top_k, 100)
@@ -189,7 +189,7 @@ def recall_at_ks_rerank(
             current_query = query_features[j:(j+bsize)]
             current_index = gallery_features[cache_nn_inds[j:(j+bsize), i]]
             start = time.time()
-            current_scores = matcher(src_global=None, src_local=current_query.to(device), 
+            current_scores = model(None, True, src_global=None, src_local=current_query.to(device), 
                 tgt_global=None, tgt_local=current_index.to(device))
             end = time.time()
             total_time += end-start

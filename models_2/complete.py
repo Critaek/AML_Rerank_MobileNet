@@ -15,5 +15,11 @@ class Network(nn.Module):
             dim_feedforward=ert_dim_feedforward, dropout=ert_dropout, 
             activation=ert_activation, normalize_before=ert_normalize_before)
 
-    def forward(self, x):
+    def forward(self, images, pairwise_matching=False, src_global=None, src_local=None, tgt_global=None, tgt_local=None):
+        if pairwise_matching:
+            logits = self.transformer(src_global=src_global, src_local=src_local, tgt_global=tgt_global, tgt_local=tgt_local)
+            return logits
         
+        l = self.backbone(images)
+
+        return l

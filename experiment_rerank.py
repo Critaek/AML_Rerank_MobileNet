@@ -312,6 +312,19 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
 
     return best_val[1][1]
 
+def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_ind):
+    print(f"Training all")
+    device = torch.device('cuda:0' if torch.cuda.is_available() and not cpu else 'cpu')
+    print(f"Device: {device}")
+    if cudnn_flag == 'deterministic':
+        setattr(cudnn, cudnn_flag, True)
+
+    torch.manual_seed(seed)
+    loaders, recall_ks = get_loaders()
+
+    torch.manual_seed(seed)
+    model = get_model(num_classes=loaders.num_classes)
+
 @ex.automain
 def main(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds):
     backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds)
