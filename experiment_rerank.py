@@ -20,7 +20,7 @@ from models_2.ingredient import model_ingredient, get_model
 from utils import pickle_load, pickle_save
 from utils import state_dict_to_cpu, BinaryCrossEntropyWithLogits, num_of_trainable_params
 from utils.data.dataset_ingredient import data_ingredient, get_loaders
-from utils.training import train_rerank, evaluate_rerank, train_rerank_backbone, train_rerank_transformer
+from utils.training import train_rerank, evaluate_rerank, train_rerank_backbone, train_rerank_transformer, evaluate_rerank_all
 
 ex = sacred.Experiment('Rerank (train)', ingredients=[data_ingredient, model_ingredient])
 # Filter backspaces and linefeeds
@@ -262,10 +262,36 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
     # setup partial function to simplify call
     eval_function = partial(evaluate_rerank, backbone=model, transformer=transformer, cache_nn_inds=cache_nn_inds,
         recall_ks=recall_ks, query_loader=loaders.query, gallery_loader=loaders.gallery)
+# Rerank the top-15 only during training to save time
+    cache_nn_inds = pickle_load(cache_nn_inds)[:, :20]
+    cache_nn_inds = torch.from_numpy(cache_nn_inds)
+
+    model.to(device)
+    transformer.to(device)
+    
+    # if torch.cuda.device_count() > 1:
+    model = nn.DataParallel(model)
+        
+    parameters = []
+    if no_bias_decay:
+        parameters.append({'params': [par for par in model.parameters() if par.dim() != 1]})
+        parameters.append({'params': [par for par in model.parameters() if par.dim() == 1], 'weight_decay': 0})
+    else:
+        parameters.append({'params': model.parameters()})
+    optimizer, scheduler = get_optimizer_scheduler(parameters=parameters)
+    
+    #with torch.no_grad():
+    #    generate_features(model, loaders.train)
+
+    # setup partial function to simplify call
+    eval_function = partial(evaluate_rerank, backbone=model, transformer=transformer, cache_nn_inds=cache_nn_inds,
+        recall_ks=recall_ks, query_loader=loaders.query, gallery_loader=loaders.gallery)
 
     # setup best validation logger
     metrics = eval_function()[0]
     torch.enable_grad()
+    pprint(metrics)
+    best_val = (0, metrics, deepcopy(model.state_dict()))
     pprint(metrics)
     best_val = (0, metrics, deepcopy(model.state_dict()))
 
@@ -325,7 +351,50 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
     torch.manual_seed(seed)
     model = get_model(num_classes=loaders.num_classes)
 
+    resume = None
+
+    if resume is not None:
+        state_dict = torch.load(resume, map_location=torch.device('cpu'))
+        if 'state' in state_dict:
+            state_dict = state_dict['state']
+        model.load_state_dict(state_dict, strict=True)
+    print('# of trainable parameters: ', num_of_trainable_params(model))
+    print('# of trainable parameters of the transformer: ', num_of_trainable_params(transformer))
+    class_loss = get_loss()
+
+    # Rerank the top-15 only during training to save time
+    cache_nn_inds = pickle_load(cache_nn_inds)[:, :20]
+    cache_nn_inds = torch.from_numpy(cache_nn_inds)
+
+    model.to(device)
+    
+    # if torch.cuda.device_count() > 1:
+    model = nn.DataParallel(model)
+        
+    parameters = []
+    if no_bias_decay:
+        parameters.append({'params': [par for par in model.parameters() if par.dim() != 1]})
+        parameters.append({'params': [par for par in model.parameters() if par.dim() == 1], 'weight_decay': 0})
+    else:
+        parameters.append({'params': model.parameters()})
+    optimizer, scheduler = get_optimizer_scheduler(parameters=parameters)
+    
+    #with torch.no_grad():
+    #    generate_features(model, loaders.train)
+
+    # setup partial function to simplify call
+    eval_function = partial(evaluate_rerank_all, model=model, cache_nn_inds=cache_nn_inds,
+        recall_ks=recall_ks, query_loader=loaders.query, gallery_loader=loaders.gallery)
+
+    # setup best validation logger
+    metrics = eval_function()[0]
+    torch.enable_grad()
+    pprint(metrics)
+    best_val = (0, metrics, deepcopy(model.state_dict()))
+
+
 @ex.automain
 def main(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds):
-    backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds)
+    #backbone_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds)
     #transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds)
+    train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds)
