@@ -41,7 +41,7 @@ def config():
     num_identities = batch_size // sample_per_id 
     num_iterations = 59551 // batch_size
 
-    train_cache_nn_inds  = 'rrt_sop_caches/rrt_r50_sop_nn_inds_train.pkl'
+    train_cache_nn_inds  = '/content/AML_Rerank_MobileNet/rrt_sop_caches/rrt_r50_sop_nn_inds_train.pkl'
     test_cache_nn_inds   = None
 
 
@@ -133,7 +133,7 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
                                                     return_distance=False)
     distances, indices = knn.kneighbors(utmeast_utmnorth_heading, n_neighbors=20)
     
-    with open("rrt_sop_caches/rrt_r50_sop_nn_inds_train.pkl", "wb+") as f:
+    with open("/content/AML_Rerank_MobileNet/rrt_sop_caches/rrt_r50_sop_nn_inds_train.pkl", "wb+") as f:
         pickle.dump(indices, f)
 
     train_set = ImageDataset(samples=samples, transform=train_transform)
@@ -187,7 +187,7 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     #                                                return_distance=False)
     distances, indices = knn.kneighbors(queries_utms, n_neighbors=20)
     
-    with open("rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl", "wb+") as f:
+    with open("/content/AML_Rerank_MobileNet/rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl", "wb+") as f:
         pickle.dump(indices, f)
     
     # queries_v1 folder
