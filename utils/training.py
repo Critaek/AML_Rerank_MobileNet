@@ -344,7 +344,7 @@ def evaluate_rerank_all(model: nn.Module,
         for batch, labels, _ in tqdm(query_loader, desc='Extracting query features', leave=False, ncols=80):
             batch, labels = map(to_device, (batch, labels))
             features = model(batch)
-            all_query_labels.append(labels)
+            all_query_labels.append(labels.cpu())
             all_query_features.append(features.cpu())
         all_query_features = torch.cat(all_query_features, 0)
         all_query_labels = torch.cat(all_query_labels, 0)
