@@ -90,6 +90,7 @@ def train_rerank(model: nn.Module,
         ##################################################
         ## extract features
         l = model(batch)
+        print(f"local features shape: {l.shape}")
         anchors   = l[0::3]
         positives = l[1::3]
         negatives = l[2::3]
