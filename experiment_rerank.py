@@ -274,7 +274,10 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
     save_name = osp.join(temp_dir, 
             '{}_{}.pt'.format(
                         ex.current_run.config['model']['arch'],
-                        ex.current_run.config['dataset']['namnum_local_features
+                        ex.current_run.config['dataset']['name']
+                    )
+            )
+    os.makedirs(temp_dir, exist_ok=True)
     save_name = "/home/cristiano/Desktop/transformer.pth"
 
     for epoch in range(epochs):
