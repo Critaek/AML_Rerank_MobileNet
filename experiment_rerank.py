@@ -338,7 +338,7 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
 
     return best_val[1][1]
 
-def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_ind):
+def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds):
     print(f"Training all")
     device = torch.device('cuda:0' if torch.cuda.is_available() and not cpu else 'cpu')
     print(f"Device: {device}")
