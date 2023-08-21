@@ -16,6 +16,7 @@ class MatchERT(nn.Module):
         self.pos_encoder = PositionEmbeddingSine(d_model//2, normalize=True, scale=2.0)
         self.seg_encoder = nn.Embedding(4, d_model)
         self.classifier = nn.Linear(d_model, 1)
+        self.relu = nn.ReLU()
         self._reset_parameters()
         self.d_model = d_model
         self.nhead = nhead
@@ -49,4 +50,5 @@ class MatchERT(nn.Module):
         #print(f"cls_embed dimensions: {cls_embed.size()} \n src_local dimansions: {src_local.size()} \n sep_embed dimensions: {sep_embed.size()} \n tgt_local dimensions: {tgt_local.size()}")
         input_feats = torch.cat([cls_embed, src_local, sep_embed, tgt_local], -1).permute(2, 0, 1)
         logits = self.encoder(input_feats)[0]
-        return self.classifier(logits).view(-1)
+        logits = self.classifier(logits).view(-1)
+        return self.relu(logits)

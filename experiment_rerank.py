@@ -31,7 +31,7 @@ ex.captured_out_filter = apply_backspaces_and_linefeeds
 @ex.config
 def config():
     epochs = 20
-    lr = 0.01
+    lr = 0.0001
     weight_decay = 4e-4
     scheduler_tau = [60, 80]
     scheduler_gamma = 0.1
@@ -236,8 +236,10 @@ def transformer_train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, re
         model.load_state_dict(state_dict, strict=True)
     print('# of trainable parameters: ', num_of_trainable_params(model))
     print('# of trainable parameters of the transformer: ', num_of_trainable_params(transformer))
-    class_loss = get_loss()
+    #class_loss = get_loss()
     
+    class_loss = nn.BCELoss()
+
     #backbone = torch.load("/content/drive/MyDrive/models/backbone.pth")
 
     # Rerank the top-15 only during training to save time
