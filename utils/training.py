@@ -98,6 +98,8 @@ def train_rerank(model: nn.Module,
         n_logits = model(None, True, src_global=None, src_local=anchors, tgt_global=None, tgt_local=negatives)
         logits = torch.cat([p_logits, n_logits], 0)
 
+        print(f"Logits: {logits}")
+
         bsize = logits.size(0)
         labels = logits.new_ones(logits.size())
         labels[(bsize//2):] = 0
