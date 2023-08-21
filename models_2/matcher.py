@@ -16,7 +16,7 @@ class MatchERT(nn.Module):
         self.pos_encoder = PositionEmbeddingSine(d_model//2, normalize=True, scale=2.0)
         self.seg_encoder = nn.Embedding(4, d_model)
         self.classifier = nn.Linear(d_model, 1)
-        self.relu = nn.ReLU()
+        self.relu = F.relu()
         self._reset_parameters()
         self.d_model = d_model
         self.nhead = nhead
