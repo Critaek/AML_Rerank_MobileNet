@@ -100,7 +100,9 @@ def train_rerank(model: nn.Module,
 
         print(f"Logits before sigmoid: {logits}")
 
-        logits = nn.Sigmoid(logits)
+        m = nn.Sigmoid()
+
+        logits = m(logits)
 
         print(f"Logits after sigmoid: {logits}")
 
