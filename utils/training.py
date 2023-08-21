@@ -103,7 +103,7 @@ def train_rerank(model: nn.Module,
         bsize = logits.size(0)
         labels = logits.new_ones(logits.size())
         labels[(bsize//2):] = 0
-        loss = class_loss(logits, labels).mean()
+        loss = class_loss(logits, None, labels).mean()
         acc = ((torch.sigmoid(logits) > 0.5).long() == labels.long()).float().mean()
 
         optimizer.zero_grad()
