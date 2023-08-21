@@ -363,7 +363,7 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
     print('# of trainable parameters: ', num_of_trainable_params(model))
     #class_loss = get_loss()
 
-    class_loss = nn.BCELoss()
+    class_loss = nn.MSELoss()
     
     # Rerank the top-15 only during training to save time
     cache_nn_inds = pickle_load(cache_nn_inds)[:, :20]

@@ -100,12 +100,6 @@ def train_rerank(model: nn.Module,
 
         print(f"Logits before sigmoid: {logits}")
 
-        m = nn.Sigmoid()
-
-        logits = m(logits)
-
-        print(f"Logits after sigmoid: {logits}")
-
         bsize = logits.size(0)
         labels = logits.new_ones(logits.size())
         labels[(bsize//2):] = 0
