@@ -238,14 +238,13 @@ def recall_at_ks_rerank(
     #return ret, closest_dists, closest_indices
 
 #### For each query, check if the predictions are correct
-    positives_per_query = cache_nn_inds
+    ground_truth = np.array(cache_nn_inds) # ground truth
+    predictions = np.array(closest_indices)
     recalls = np.zeros(len(ks))
-    for query_index, preds in enumerate(closest_indices):
-        for i, n in enumerate(ks):
-            # OR(AND)
-            if np.any(np.in1d(preds[:n], positives_per_query[query_index])):
-                recalls[i:] += 1
-                break
+
+    for query_index, preds in enumerate(predictions):
+        for i, n in enumerate(ks): #1, 5, 10, 20
+            recalls[i:] += np.mean(preds[:n], ground_truth[query_index][:n])
     
     recalls = recalls / query_features.size(0) * 100
 
