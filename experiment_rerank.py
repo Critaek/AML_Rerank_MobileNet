@@ -30,7 +30,7 @@ ex.captured_out_filter = apply_backspaces_and_linefeeds
 
 @ex.config
 def config():
-    epochs = 20
+    epochs = 10
     lr = 0.0001
     weight_decay = 4e-4
     scheduler_tau = [60, 80]
@@ -390,10 +390,11 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
         recall_ks=recall_ks, query_loader=loaders.query, gallery_loader=loaders.gallery)
 
     # setup best validation logger
-    metrics = eval_function()[0]
+    #metrics = eval_function()[0]
     torch.enable_grad()
-    pprint(metrics)
-    best_val = (0, metrics, deepcopy(model.state_dict()))
+    #pprint(metrics)
+    #best_val = (0, metrics, deepcopy(model.state_dict()))
+    best_val = float('inf')
 
     torch.manual_seed(seed)
     # saving
@@ -403,34 +404,37 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
                         ex.current_run.config['dataset']['name']
                     )
             )
+    
+    save_name = '/content/drive/MyDrive/models/final.pth'
+    
     os.makedirs(temp_dir, exist_ok=True)
 
     for epoch in range(epochs):
         if cudnn_flag == 'benchmark':
             setattr(cudnn, cudnn_flag, True)
 
-        train_rerank(model=model, loader=loaders.train, class_loss=class_loss, optimizer=optimizer, scheduler=scheduler, epoch=epoch, ex=ex)
+        loss_value = train_rerank(model=model, loader=loaders.train, class_loss=class_loss, optimizer=optimizer, scheduler=scheduler, epoch=epoch, ex=ex)
 
         if cudnn_flag == 'benchmark':
             setattr(cudnn, cudnn_flag, False)
-        metrics = eval_function()[0]
-        print('Validation [{:03d}]'.format(epoch)), pprint(metrics)
-        ex.log_scalar('val.recall@1', metrics[1], step=epoch + 1)
 
-        if metrics[1] >= best_val[1][1]:
-            best_val = (epoch + 1, metrics, deepcopy(model.state_dict()))
+        if loss_value <= best_val:
+            best_val = loss_value
             torch.save(
                 {
-                    'state': state_dict_to_cpu(best_val[2]),
+                    'state': state_dict_to_cpu(deepcopy(model.state_dict())),
                     'optim': optimizer.state_dict(),
                     'scheduler': scheduler.state_dict(),
                 }, save_name)
 
     # logging
-    ex.info['recall'] = best_val[1]
+    ex.info['recall'] = best_val
     ex.add_artifact(save_name)
 
-    return best_val[1][1]
+    metrics = eval_function()[0]
+    pprint(metrics)
+
+    return best_val
 
 @ex.automain
 def main(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds):

@@ -99,7 +99,7 @@ def train_rerank(model: nn.Module,
         logits = torch.cat([p_logits, n_logits], 0)
 
         bsize = logits.size(0)
-        labels = logits.new_ones(logits.size())
+        labels = logits.new_ones(logits.size()) * 100
         labels[(bsize//2):] = 0
         loss = class_loss(logits, labels).mean()
         acc = ((torch.sigmoid(logits) > 0.5).long() == labels.long()).float().mean()
@@ -122,6 +122,8 @@ def train_rerank(model: nn.Module,
             step = epoch + i / loader_length
             ex.log_scalar('train.loss', loss, step=step)
             ex.log_scalar('train.acc', acc, step=step)
+
+    return loss.item()
 
 def train_rerank_backbone(model: nn.Module,
         loader: DataLoader,
