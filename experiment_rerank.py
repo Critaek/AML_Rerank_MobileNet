@@ -390,7 +390,7 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
         recall_ks=recall_ks, query_loader=loaders.query, gallery_loader=loaders.gallery)
 
     # setup best validation logger
-    #metrics = eval_function()[0]
+    metrics = eval_function()[0]
     torch.enable_grad()
     #pprint(metrics)
     #best_val = (0, metrics, deepcopy(model.state_dict()))
