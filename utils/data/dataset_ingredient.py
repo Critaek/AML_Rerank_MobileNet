@@ -169,6 +169,9 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
             counter += 1
 
     print(f"Counter: {counter}")
+
+    print(f"class_id_queries: {class_id_queries}")
+    print(f"class_id_gallery: {class_id_database}")
     
     images_per_class_database = defaultdict(list)
     for image_path, class_id in zip(database_paths, class_id_database):
