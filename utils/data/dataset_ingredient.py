@@ -181,7 +181,7 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     print(f"samples_queries len: {len(samples_queries)}") #8002
 
     knn = NearestNeighbors(n_jobs=-1, algorithm="brute", metric="euclidean")
-    knn.fit(database_utms)
+    knn.fit(queries_utms)
     #positives_per_query = knn.radius_neighbors(queries_utms,
     #                                                radius=positive_dist_threshold,
     #                                                return_distance=False)
