@@ -176,6 +176,7 @@ def recall_at_ks_rerank(
 
     num_samples, top_k = cache_nn_inds.size()
     top_k = min(top_k, 100)
+    top_k = gallery_features.shape[0]
     _, fsize, h, w = query_features.size()
 
     # bsize = batch_size for reranking
@@ -244,7 +245,7 @@ def recall_at_ks_rerank(
 
     for query_index, preds in enumerate(predictions):
         for i, n in enumerate(ks): #1, 5, 10, 20
-            recalls[i:] += np.mean(preds[:n], ground_truth[query_index][:n])
+            recalls[i:] += np.mean(preds[:n] == ground_truth[query_index][:n])
     
     recalls = recalls / query_features.size(0) * 100
 
