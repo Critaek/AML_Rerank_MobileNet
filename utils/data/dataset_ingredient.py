@@ -161,6 +161,14 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
                             for m in queries_utms]
     
     print(len(set(class_id_queries)))
+
+    counter = 0
+
+    for ci_q in class_id_queries:
+        if ci_q in class_id_database:
+            counter += 1
+
+    print(f"Counter: {counter}")
     
     images_per_class_database = defaultdict(list)
     for image_path, class_id in zip(database_paths, class_id_database):
@@ -181,7 +189,7 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     print(f"samples_queries len: {len(samples_queries)}") #8002
 
     knn = NearestNeighbors(n_jobs=-1, algorithm="brute", metric="euclidean")
-    knn.fit(queries_utms)
+    knn.fit(database_utms)
     #positives_per_query = knn.radius_neighbors(queries_utms,
     #                                                radius=positive_dist_threshold,
     #                                                return_distance=False)
