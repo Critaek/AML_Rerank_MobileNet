@@ -208,13 +208,13 @@ def recall_at_ks_rerank(
     #     for j in range(top_k):
     #         closest_indices[i, j] = cache_nn_inds[i, indices[i, j]]
     # closest_indices = closest_indices.numpy()
-    closest_indices = torch.gather(cache_nn_inds, -1, indices).numpy()   
+    closest_indices = torch.gather(cache_nn_inds, -1, indices).numpy()   #predictions
 
-    max_k = max(ks)
-    recalls = {}
-    for k in ks:
-        indices = closest_indices[:, :k]
-        recalls[k] = (q_l[:, None] == g_l[indices]).any(1).mean()
+    #max_k = max(ks)
+    #recalls = {}
+    #for k in ks:
+    #    indices = closest_indices[:, :k]
+    #    recalls[k] = (q_l[:, None] == g_l[indices]).any(1).mean()
 
     #recalls = np.zeros(len(ks))
     #for query_index, preds in enumerate(closest_indices):
@@ -230,17 +230,21 @@ def recall_at_ks_rerank(
     
     #ret = {k: round(v, 2) for k, v in zip(ks, recalls)}
 
-    ret = {k: round(v * 100, 2) for k, v in recalls.items()}
+    #ret = {k: round(v * 100, 2) for k, v in recalls.items()}
 
-    return ret, closest_dists, closest_indices
+    #return ret, closest_dists, closest_indices
 
 #### For each query, check if the predictions are correct
-    positives_per_query = eval_ds.get_positives()
-    recalls = np.zeros(len(RECALL_VALUES))
-    for query_index, preds in enumerate(predictions):
-        for i, n in enumerate(RECALL_VALUES):
+    positives_per_query = cache_nn_inds
+    recalls = np.zeros(len(ks))
+    for query_index, preds in enumerate(closest_indices):
+        for i, n in enumerate(ks):
             # OR(AND)
             if np.any(np.in1d(preds[:n], positives_per_query[query_index])):
                 recalls[i:] += 1
                 break
+    
+    recalls = recalls / query_features.size(0) * 100
+
+    return recalls, closest_dists, closest_indices
 
