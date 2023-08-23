@@ -86,7 +86,7 @@ def read_file(filename):
 
 
 @data_ingredient.capture
-def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alpha=360, N=5, L=2,
+def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alpha=30, N=5, L=2,
                  current_group=0, min_images_per_class=10, queries_folder_name = "queries",
                  positive_dist_threshold=25):
 
@@ -128,9 +128,9 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
 
     knn = NearestNeighbors(n_jobs=-1)
     knn.fit(utmeast_utmnorth_heading)
-    positives_per_query = knn.radius_neighbors(utmeast_utmnorth_heading,
-                                                    radius=positive_dist_threshold,
-                                                    return_distance=False)
+    #positives_per_query = knn.radius_neighbors(utmeast_utmnorth_heading,
+    #                                                radius=positive_dist_threshold,
+    #                                                return_distance=False)
     distances, indices = knn.kneighbors(utmeast_utmnorth_heading, n_neighbors=20)
     
     with open("/content/AML_Rerank_MobileNet/rrt_sop_caches/rrt_r50_sop_nn_inds_train.pkl", "wb+") as f:
