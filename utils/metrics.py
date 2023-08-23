@@ -162,7 +162,6 @@ def recall_at_ks_rerank(
     print(f"Query features and labels shape: {query_features.shape} {query_labels.shape}")
     print(f"Gallery features and labels shape: {gallery_features.shape} {gallery_labels.shape}")
     if gallery_features is None and gallery_labels is None:
-        print("Sono stronzo e sono entrato qua")
         gallery_features = query_features
         gallery_labels = query_labels
     elif gallery_features is None or gallery_labels is None:
