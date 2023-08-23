@@ -2,6 +2,7 @@ from typing import Dict, List, Optional
 import faiss, time
 from tqdm import tqdm 
 import numpy as np
+from utils import pickle_load
 
 
 import torch
@@ -159,6 +160,9 @@ def recall_at_ks_rerank(
 
     """
 
+    ground_truth = pickle_load("/content/AML_Rerank_MobileNet/rrt_sop_caches/rrt_r50_sop_nn_inds_positives.pkl")
+    ground_truth = np.array(ground_truth)
+
     print(f"Query features and labels shape: {query_features.shape} {query_labels.shape}")
     print(f"Gallery features and labels shape: {gallery_features.shape} {gallery_labels.shape}")
     if gallery_features is None and gallery_labels is None:
@@ -175,6 +179,7 @@ def recall_at_ks_rerank(
     device = next(model.parameters()).device
 
     num_samples, top_k = cache_nn_inds.size()
+    print(f"num_samples: {num_samples}")
     top_k = min(top_k, 100)
     top_k = gallery_features.shape[0]
     _, fsize, h, w = query_features.size()
@@ -191,7 +196,7 @@ def recall_at_ks_rerank(
         k_scores = []
         for j in range(0, num_samples, bsize):
             current_query = query_features[j:(j+bsize)]
-            current_index = gallery_features[j:(j+bsize)]
+            current_index = gallery_features[cache_nn_inds[j:(j+bsize), i]]
             start = time.time()
             current_scores = model(None, True, src_global=None, src_local=current_query.to(device), 
                 tgt_global=None, tgt_local=current_index.to(device))
@@ -203,6 +208,8 @@ def recall_at_ks_rerank(
     print('time', total_time/num_samples)
     scores = torch.stack(scores, -1)
     closest_dists, indices = torch.sort(scores, dim=-1, descending=True)
+    print(f"cache_nn_inds: {cache_nn_inds}")
+    print(f"Predicted indices: {indices}")
     closest_dists = closest_dists.numpy()    
     # closest_indices = torch.zeros((num_samples, top_k)).long()
     # for i in range(num_samples):
@@ -210,6 +217,7 @@ def recall_at_ks_rerank(
     #         closest_indices[i, j] = cache_nn_inds[i, indices[i, j]]
     # closest_indices = closest_indices.numpy()
     closest_indices = torch.gather(cache_nn_inds, -1, indices).numpy()   #predictions
+    print(f"closest_indices: {closest_indices}")
 
     #max_k = max(ks)
     #recalls = {}
@@ -236,7 +244,7 @@ def recall_at_ks_rerank(
     #return ret, closest_dists, closest_indices
 
 #### For each query, check if the predictions are correct
-    ground_truth = np.array(cache_nn_inds) # ground truth
+    #ground_truth = np.array(cache_nn_inds) # ground truth
     predictions = np.array(closest_indices)
     recalls = np.zeros(len(ks))
 
