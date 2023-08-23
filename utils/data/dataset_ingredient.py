@@ -185,6 +185,7 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     positives_per_query = knn.radius_neighbors(queries_utms,
                                                radius=positive_dist_threshold,
                                                return_distance=False)
+    print(f"positives: {positives_per_query}")
     #distances, indices = knn.kneighbors(queries_utms, n_neighbors=len(samples_database))
     
     with open("/content/AML_Rerank_MobileNet/rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl", "wb+") as f:
