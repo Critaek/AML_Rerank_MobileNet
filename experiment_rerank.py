@@ -409,7 +409,7 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
 
     for epoch in range(epochs):
 
-        save_name = f'/content/drive/MyDrive/models/final.pth'
+        save_name = f'/content/drive/MyDrive/models/final_{epoch}.pth'
 
         if cudnn_flag == 'benchmark':
             setattr(cudnn, cudnn_flag, True)
@@ -421,7 +421,7 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
 
         if loss_value <= best_val:
             best_val = loss_value
-            
+
         torch.save(
             {
                 'state': state_dict_to_cpu(deepcopy(model.state_dict())),
