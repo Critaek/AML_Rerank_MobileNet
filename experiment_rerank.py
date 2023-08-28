@@ -33,7 +33,7 @@ def config():
     epochs = 10
     lr = 0.0001
     weight_decay = 4e-4
-    scheduler_tau = [60, 80]
+    scheduler_tau = [5, 80]
     scheduler_gamma = 0.1
     cpu = False  # Force training on CPU
     cudnn_flag = 'benchmark'
@@ -405,11 +405,12 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
                     )
             )
     
-    save_name = '/content/drive/MyDrive/models/final.pth'
-    
     os.makedirs(temp_dir, exist_ok=True)
 
     for epoch in range(epochs):
+
+        save_name = f'/content/drive/MyDrive/models/final.pth'
+
         if cudnn_flag == 'benchmark':
             setattr(cudnn, cudnn_flag, True)
 
@@ -420,12 +421,13 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
 
         if loss_value <= best_val:
             best_val = loss_value
-            torch.save(
-                {
-                    'state': state_dict_to_cpu(deepcopy(model.state_dict())),
-                    'optim': optimizer.state_dict(),
-                    'scheduler': scheduler.state_dict(),
-                }, save_name)
+            
+        torch.save(
+            {
+                'state': state_dict_to_cpu(deepcopy(model.state_dict())),
+                'optim': optimizer.state_dict(),
+                'scheduler': scheduler.state_dict(),
+            }, save_name)
 
     # logging
     ex.info['recall'] = best_val

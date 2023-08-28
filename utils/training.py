@@ -111,7 +111,7 @@ def train_rerank(model: nn.Module,
         train_losses.append(loss)
         train_accs.append(acc)
 
-        if not (i + 1) % 20:
+        if not (i + 1) % 100:
             print(f"Loss at batch {i+1}: {loss.item()}")
             print(f"Logits: {logits}")
 
@@ -123,7 +123,7 @@ def train_rerank(model: nn.Module,
             ex.log_scalar('train.loss', loss, step=step)
             ex.log_scalar('train.acc', acc, step=step)
 
-    return loss.item()
+    return loss
 
 def train_rerank_backbone(model: nn.Module,
         loader: DataLoader,
