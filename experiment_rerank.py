@@ -394,7 +394,7 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
     if optim and sched_dict is not None:
         optimizer.load_state_dict(optim)
         scheduler.load_state_dict(sched_dict)
-        print(optimizer.state_dict()['milestones'])
+        print(optimizer.state_dict())
         print(scheduler.state_dict()['milestones'])
     
     #with torch.no_grad():
