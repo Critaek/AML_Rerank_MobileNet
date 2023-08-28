@@ -358,15 +358,16 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
     if resume is not None:
         print("Resuming")
         state_dict = torch.load(resume, map_location=torch.device('cpu'))
-        if 'state' in state_dict:
-            state_dict = state_dict['state']
-        model.load_state_dict(state_dict, strict=True)
         
         if 'optim' in state_dict:
             optim = state_dict['optim']
         
         if 'scheduler' in state_dict:
             sched_dict = state_dict['scheduler']
+
+        if 'state' in state_dict:
+            state_dict = state_dict['state']
+        model.load_state_dict(state_dict, strict=True)
 
     print('# of trainable parameters: ', num_of_trainable_params(model))
     #class_loss = get_loss()
