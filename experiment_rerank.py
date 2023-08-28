@@ -421,6 +421,13 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
     os.makedirs(temp_dir, exist_ok=True)
 
     for epoch in range(epochs):
+        for param_group in optimizer.param_groups:
+            print(f"Learning rate for this epoch: {param_group['lr']}")
+        print(epoch)
+        scheduler.step()
+
+
+    for epoch in range(epochs):
 
         for param_group in optimizer.param_groups:
             print(f"Learning rate for this epoch: {param_group['lr']}")
