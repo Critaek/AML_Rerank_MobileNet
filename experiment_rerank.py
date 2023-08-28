@@ -394,9 +394,6 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
     if optim and sched_dict is not None:
         optimizer.load_state_dict(optim)
         scheduler.load_state_dict(sched_dict)
-
-    for param_group in optimizer.param_groups:
-        print(param_group['lr'])
     
     #with torch.no_grad():
     #    generate_features(model, loaders.train)
@@ -424,6 +421,9 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
     os.makedirs(temp_dir, exist_ok=True)
 
     for epoch in range(epochs):
+
+        for param_group in optimizer.param_groups:
+            print(f"Learning rate for this epoch: {param_group['lr']}")
 
         save_name = f'/content/drive/MyDrive/models/final_{epoch+4}.pth'
         print(save_name)
