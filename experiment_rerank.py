@@ -361,6 +361,13 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
         if 'state' in state_dict:
             state_dict = state_dict['state']
         model.load_state_dict(state_dict, strict=True)
+        
+        if 'optim' in state_dict:
+            optim = state_dict['optim']
+        
+        if 'scheduler' in state_dict:
+            sched_dict = state_dict['scheduler']
+
     print('# of trainable parameters: ', num_of_trainable_params(model))
     #class_loss = get_loss()
 
@@ -382,6 +389,12 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
     else:
         parameters.append({'params': model.parameters()})
     optimizer, scheduler = get_optimizer_scheduler(parameters=parameters)
+
+    if optim and sched_dict is not None:
+        optimizer.load_state_dict(optim)
+        scheduler.load_state_dict(sched_dict)
+        print(optimizer.state_dict())
+        print(scheduler.state_dict())
     
     #with torch.no_grad():
     #    generate_features(model, loaders.train)
