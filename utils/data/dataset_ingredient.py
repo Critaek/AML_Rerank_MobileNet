@@ -87,7 +87,7 @@ def read_file(filename):
 
 @data_ingredient.capture
 def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alpha=30, N=5, L=2,
-                 current_group=0, min_images_per_class=10, queries_folder_name = "queries",
+                 current_group=0, min_images_per_class=10, queries_folder_name = "queries_v1",
                  positive_dist_threshold=25):
 
     # Open training folder
