@@ -26,6 +26,6 @@ class ImageDataset(Dataset):
         if self.transform is not None:
             image = self.transform(image)
         
-        print(image.size)
+        print(image.size())
 
         return image, label, index
