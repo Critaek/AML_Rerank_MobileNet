@@ -186,7 +186,7 @@ def recall_at_ks_rerank(
 
     # bsize = batch_size for reranking
     # Changed.
-    bsize = 1000
+    bsize = 500
     scores = []
     total_time = 0.0
     ######################################################################
