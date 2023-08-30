@@ -243,10 +243,10 @@ def get_loaders(batch_size, test_batch_size,
     else:
         raise ValueError('Invalid choice of sampler ({}).'.format(sampler))
     train_loader = DataLoader(train_set, batch_sampler=train_sampler, num_workers=num_workers, pin_memory=pin_memory)
-    query_loader = DataLoader(query_set, batch_size=test_batch_size, num_workers=num_workers, pin_memory=pin_memory)
+    query_loader = DataLoader(query_set, batch_size=test_batch_size, num_workers=0, pin_memory=pin_memory)
     gallery_loader = None
     if gallery_set is not None:
-        gallery_loader = DataLoader(gallery_set, batch_size=test_batch_size, num_workers=num_workers, pin_memory=pin_memory)
+        gallery_loader = DataLoader(gallery_set, batch_size=test_batch_size, num_workers=0, pin_memory=pin_memory)
 
     return MetricLoaders(train=train_loader, query=query_loader, gallery=gallery_loader, num_classes=max(train_set.targets) + 1), recalls
 
