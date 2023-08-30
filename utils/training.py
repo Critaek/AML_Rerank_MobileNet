@@ -353,6 +353,8 @@ def evaluate_rerank_all(model: nn.Module,
         all_query_features = torch.cat(all_query_features, 0)
         all_query_labels = torch.cat(all_query_labels, 0)
 
+        print(f"all_query_features size: {all_query_features.size()}")
+
         if gallery_loader is not None:
             all_gallery_features = []
             all_gallery_labels = []
