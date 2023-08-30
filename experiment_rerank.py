@@ -457,10 +457,12 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
 
 def test(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_nn_inds):
     print("Testing")
+    device = torch.device('cuda:0' if torch.cuda.is_available() and not cpu else 'cpu')
     loaders, recall_ks = get_loaders()
 
     model = get_model(num_classes=loaders.num_classes)
-    resume = resume = f'/content/drive/MyDrive/models/final_9.pth'
+    model.to(device)
+    resume = f'/content/drive/MyDrive/models/final_9.pth'
     
     if resume is not None:
         print("Resuming")
