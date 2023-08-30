@@ -143,8 +143,8 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     queries_folder = os.path.join(test_folder, queries_folder_name)
 
     base_transform = transforms.Compose([
-            transforms.Resize(512),
             transforms.ToTensor(),
+            transforms.Resize((512,512)),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ])
     
