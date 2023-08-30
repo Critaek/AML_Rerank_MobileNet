@@ -22,9 +22,10 @@ class ImageDataset(Dataset):
     def __getitem__(self, index):
         image_path, label = self.samples[index]
         image = Image.open(image_path).convert('RGB')
-        print(image.size)
 
         if self.transform is not None:
             image = self.transform(image)
+        
+        print(image.size)
 
         return image, label, index
