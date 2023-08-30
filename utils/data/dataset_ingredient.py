@@ -179,6 +179,8 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     samples_database = [(img, sublist[1]) for sublist in images_per_class_database for img in sublist[0]]
     samples_queries = [(img, sublist[1]) for sublist in images_per_class_queries for img in sublist[0]]
 
+    print(samples_queries[0][1])
+
     queries_shapes = [x[1].shape for x in samples_queries]
     print(f"Queries shapes: {queries_shapes}")
 
