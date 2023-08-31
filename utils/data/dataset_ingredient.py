@@ -29,7 +29,7 @@ def config():
     batch_size = 32
     sample_per_id = 2
     assert (batch_size % sample_per_id == 0)
-    test_batch_size = 1024
+    test_batch_size = 256
     sampler = 'triplet' #"random"
 
     num_workers = 8 
