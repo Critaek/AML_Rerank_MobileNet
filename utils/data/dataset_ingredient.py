@@ -188,16 +188,16 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
                                                     radius=positive_dist_threshold,
                                                     return_distance=True)
     
-    print(f"distances: {distances[0][0:5]}")
-    print(f"positives: {positives_per_query[0][0:5]}")
+    print(f"distances: {distances[0][0:8]}")
+    print(f"positives: {positives_per_query[0][0:8]}")
     
     with open("/content/AML_Rerank_MobileNet/rrt_sop_caches/rrt_r50_sop_nn_inds_positives.pkl", "wb+") as f:
         pickle.dump(positives_per_query, f)
         
     distances, indices = knn.kneighbors(queries_utms, n_neighbors=len(samples_database))
 
-    print(f"distances: {distances[0][0:5]}")
-    print(f"test: {indices[0][0:5]}")
+    print(f"distances: {distances[0][0:8]}")
+    print(f"test: {indices[0][0:8]}")
     
     with open("/content/AML_Rerank_MobileNet/rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl", "wb+") as f:
         pickle.dump(indices, f)
