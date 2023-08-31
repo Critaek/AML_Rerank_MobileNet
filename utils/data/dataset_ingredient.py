@@ -188,6 +188,7 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
                                                     radius=positive_dist_threshold,
                                                     return_distance=True, sort_results=True)
     
+    print(f"len first query: {len(distances[0])}")
     print(f"distances: {distances[0][0:8]}")
     print(f"positives: {positives_per_query[0][0:8]}")
     
