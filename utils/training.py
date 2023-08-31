@@ -375,9 +375,9 @@ def evaluate_rerank_all(model: nn.Module,
             )
         recalls_rerank, nn_dists, nn_inds = recall_function()
 
-    print(f"Free GPU memory before deleting: {get_gpu_memory()}")
+    #print(f"Free GPU memory before deleting: {get_gpu_memory()}")
     del all_query_features, all_query_labels, all_gallery_features, all_gallery_labels
     torch.cuda.empty_cache()
-    print(f"Free GPU memory after deleting: {get_gpu_memory()}")
+    #print(f"Free GPU memory after deleting: {get_gpu_memory()}")
 
     return recalls_rerank, nn_dists, nn_inds
