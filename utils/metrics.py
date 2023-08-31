@@ -176,6 +176,8 @@ def recall_at_ks_rerank(
 
     device = next(model.parameters()).device
 
+    print(f"cache_nn_inds size: {cache_nn_inds.size()}")
+
     num_samples, top_k = cache_nn_inds.size()
     print(f"num_samples: {num_samples}")
     top_k = min(top_k, 100)
@@ -192,12 +194,12 @@ def recall_at_ks_rerank(
                                   tgt_global=None, tgt_local=gallery.to(device))
             k_scores.append(current_score.cpu())
         k_scores = torch.cat(k_scores, 0)
+        print(f"k_scores size: {k_scores.size()}")
         scores.append(k_scores)
 
     # bsize = batch_size for reranking
     # Changed.
     bsize = min(num_samples, 500)
-    print(f"bsize: {bsize}")
     total_time = 0.0
     ######################################################################
     """
@@ -221,6 +223,7 @@ def recall_at_ks_rerank(
     scores = torch.stack(scores, -1)
     closest_dists, indices = torch.sort(scores, dim=-1, descending=True)
     closest_dists = closest_dists.numpy()    
+    print(f"closest_dists shape: {closest_dists.shape}")
     # closest_indices = torch.zeros((num_samples, top_k)).long()
     # for i in range(num_samples):
     #     for j in range(top_k):
