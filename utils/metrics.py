@@ -221,7 +221,7 @@ def recall_at_ks_rerank(
     """
     print('time', total_time/num_samples)
     print(f"scores len before stack: {len(scores)}")
-    scores = torch.stack(scores, -1)
+    scores = torch.stack(scores, 0)
     print(f"scores size after stack: {scores.size()}")
     closest_dists, indices = torch.sort(scores, dim=-1, descending=True)
     closest_dists = closest_dists.numpy()
