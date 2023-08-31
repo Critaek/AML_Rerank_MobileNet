@@ -196,7 +196,6 @@ def recall_at_ks_rerank(
         k_scores = torch.cat(k_scores, 0)
         print(f"k_scores size: {k_scores.size()}")
         scores.append(k_scores)
-        break
 
     # bsize = batch_size for reranking
     # Changed.
@@ -232,9 +231,9 @@ def recall_at_ks_rerank(
     #     for j in range(top_k):
     #         closest_indices[i, j] = cache_nn_inds[i, indices[i, j]]
     # closest_indices = closest_indices.numpy()
-    closest_indices = torch.gather(cache_nn_inds, -1, indices).numpy()   #predictions
+    #closest_indices = torch.gather(cache_nn_inds, -1, indices).numpy()   #predictions
     print(f"closest_dists: {closest_dists[0][0:5]}")
-    print(f"closest_indices: {closest_indices[0][0:5]}")
+    #print(f"closest_indices: {closest_indices[0][0:5]}")
     print(f"indices: {indices[0][0:5]}")
     print(f"ground_truth: {ground_truth[0][0:5]}")
 
@@ -264,7 +263,7 @@ def recall_at_ks_rerank(
 
 #### For each query, check if the predictions are correct
     #ground_truth = np.array(cache_nn_inds) # ground truth
-    predictions = np.array(closest_indices)
+    predictions = np.array(indices)
     recalls = np.zeros(len(ks))
 
     for query_index, preds in enumerate(predictions):
@@ -277,5 +276,5 @@ def recall_at_ks_rerank(
 
     print(f"Recalls: {recalls}")
 
-    return recalls, closest_dists, closest_indices
+    return recalls, closest_dists, indices
 
