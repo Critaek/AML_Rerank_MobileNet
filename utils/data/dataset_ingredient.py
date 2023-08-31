@@ -182,9 +182,6 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     samples_queries = [(img, sublist[1]) for sublist in images_per_class_queries for img in sublist[0]]
 
     print(samples_queries[0][0])
-    img = mpimg.imread(samples_queries[0][0])
-    plt.imshow(img)
-    plt.show()
 
     print(f"samples_database len: {len(samples_database)}") #8023
     print(f"samples_queries len: {len(samples_queries)}") #8002
