@@ -222,8 +222,8 @@ def recall_at_ks_rerank(
     print('time', total_time/num_samples)
     scores = torch.stack(scores, -1)
     closest_dists, indices = torch.sort(scores, dim=-1, descending=True)
-    closest_dists = closest_dists.numpy()    
-    print(f"closest_dists shape: {closest_dists.shape}")
+    closest_dists = closest_dists.numpy()
+    print(f"indices shape: {indices.shape}")
     # closest_indices = torch.zeros((num_samples, top_k)).long()
     # for i in range(num_samples):
     #     for j in range(top_k):
