@@ -269,7 +269,7 @@ def recall_at_ks_rerank(
 
     for query_index, preds in enumerate(predictions):
         for i, n in enumerate(ks): #1, 5, 10, 20
-            if np.any(np.in1d(preds[:n], cache_nn_inds[query_index][:n])):
+            if np.any(np.in1d(preds[:n], ground_truth[query_index])):
                 recalls[i:] += 1
                 break
     
