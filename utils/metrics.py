@@ -187,6 +187,7 @@ def recall_at_ks_rerank(
     # bsize = batch_size for reranking
     # Changed.
     bsize = min(num_samples, 500)
+    print(f"bsize: {bsize}")
     scores = []
     total_time = 0.0
     ######################################################################
