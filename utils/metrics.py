@@ -181,6 +181,7 @@ def recall_at_ks_rerank(
     top_k = min(top_k, 100)
     top_k = gallery_features.shape[0]
     _, fsize, h, w = query_features.size()
+    scores = []
 
     for query in tqdm(query_features):
         query = torch.unsqueeze(query, 0)
