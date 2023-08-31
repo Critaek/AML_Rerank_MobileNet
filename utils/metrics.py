@@ -233,11 +233,11 @@ def recall_at_ks_rerank(
     #         closest_indices[i, j] = cache_nn_inds[i, indices[i, j]]
     # closest_indices = closest_indices.numpy()
     #closest_indices = torch.gather(cache_nn_inds, -1, indices).numpy()   #predictions
-    print(f"closest_dists: {closest_dists[0][0:5]}")
+    print(f"closest_dists: {closest_dists[0][0:8]}")
     #print(f"closest_indices: {closest_indices[0][0:5]}")
-    print(f"indices: {indices[0][0:5]}")
-    print(f"ground_truth: {ground_truth[0][0:5]}")
-    print(f"cache_nn_inds: {cache_nn_inds[0][0:5]}")
+    print(f"indices: {indices[0][0:8]}")
+    print(f"ground_truth: {ground_truth[0][0:8]}")
+    print(f"cache_nn_inds: {cache_nn_inds[0][0:8]}")
 
     #max_k = max(ks)
     #recalls = {}
