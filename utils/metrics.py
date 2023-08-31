@@ -188,6 +188,7 @@ def recall_at_ks_rerank(
         query = torch.unsqueeze(query, 0)
         k_scores = []
         for gallery in gallery_features:
+            gallery = torch.unsqueeze(gallery, 0)
             current_score = model(None, True, src_global=None, src_local=query.to(device),
                                   tgt_global=None, tgt_local=gallery.to(device))
             k_scores.append(current_score.cpu())
