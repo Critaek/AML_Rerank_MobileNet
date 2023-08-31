@@ -208,8 +208,6 @@ def recall_at_ks_rerank(
     print('time', total_time/num_samples)
     scores = torch.stack(scores, -1)
     closest_dists, indices = torch.sort(scores, dim=-1, descending=True)
-    print(f"cache_nn_inds: {cache_nn_inds}")
-    print(f"Predicted indices: {indices}")
     closest_dists = closest_dists.numpy()    
     # closest_indices = torch.zeros((num_samples, top_k)).long()
     # for i in range(num_samples):
@@ -217,7 +215,6 @@ def recall_at_ks_rerank(
     #         closest_indices[i, j] = cache_nn_inds[i, indices[i, j]]
     # closest_indices = closest_indices.numpy()
     closest_indices = torch.gather(cache_nn_inds, -1, indices).numpy()   #predictions
-    print(f"closest_indices: {closest_indices}")
 
     #max_k = max(ks)
     #recalls = {}
@@ -255,6 +252,8 @@ def recall_at_ks_rerank(
                 break
     
     recalls = recalls / query_features.size(0) * 100
+
+    print(f"Recalls: {recalls}")
 
     return recalls, closest_dists, closest_indices
 
