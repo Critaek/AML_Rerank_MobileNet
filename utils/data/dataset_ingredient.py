@@ -186,7 +186,7 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     knn.fit(database_utms)
     distances, positives_per_query = knn.radius_neighbors(queries_utms,
                                                     radius=positive_dist_threshold,
-                                                    return_distance=True)
+                                                    return_distance=True, sort_results=True)
     
     print(f"distances: {distances[0][0:8]}")
     print(f"positives: {positives_per_query[0][0:8]}")
