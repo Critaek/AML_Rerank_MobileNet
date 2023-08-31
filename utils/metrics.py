@@ -184,6 +184,15 @@ def recall_at_ks_rerank(
     top_k = gallery_features.shape[0]
     _, fsize, h, w = query_features.size()
 
+    for query in tqdm(query_features):
+        k_scores = []
+        for gallery in gallery_features:
+            current_score = model(None, True, src_global=None, src_local=query.to(device),
+                                  tgt_global=None, tgt_local=gallery.to(device))
+            k_scores.append(current_score.cpu())
+        k_scores = torch.cat(k_scores, 0)
+        scores.append(k_scores)
+
     # bsize = batch_size for reranking
     # Changed.
     bsize = min(num_samples, 500)
@@ -191,6 +200,7 @@ def recall_at_ks_rerank(
     scores = []
     total_time = 0.0
     ######################################################################
+    """
     print('--------------------------------------------')
     print('Start reranking')
     for i in tqdm(range(top_k)): #top_k = 20
@@ -206,6 +216,7 @@ def recall_at_ks_rerank(
             k_scores.append(current_scores.cpu())
         k_scores = torch.cat(k_scores, 0)
         scores.append(k_scores)
+    """
     print('time', total_time/num_samples)
     scores = torch.stack(scores, -1)
     closest_dists, indices = torch.sort(scores, dim=-1, descending=True)
