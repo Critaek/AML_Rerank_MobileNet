@@ -185,6 +185,7 @@ def recall_at_ks_rerank(
     _, fsize, h, w = query_features.size()
 
     for query in tqdm(query_features):
+        query = torch.unsqueeze(query, 0)
         k_scores = []
         for gallery in gallery_features:
             current_score = model(None, True, src_global=None, src_local=query.to(device),
