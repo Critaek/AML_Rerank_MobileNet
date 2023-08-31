@@ -353,7 +353,7 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
     torch.manual_seed(seed)
     model = get_model(num_classes=loaders.num_classes)
 
-    resume = f'/content/drive/MyDrive/models/final_3.pth'
+    resume = f'/content/drive/MyDrive/models/final_9.pth'
 
     if resume is not None:
         print("Resuming")
