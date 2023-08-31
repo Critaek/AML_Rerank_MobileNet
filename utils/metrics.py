@@ -196,7 +196,6 @@ def recall_at_ks_rerank(
         k_scores = torch.cat(k_scores, 0)
         print(f"k_scores size: {k_scores.size()}")
         scores.append(k_scores)
-        break
 
     # bsize = batch_size for reranking
     # Changed.
