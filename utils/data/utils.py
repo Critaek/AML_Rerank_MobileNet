@@ -75,7 +75,6 @@ class TripletSampler():
             idx = cands[i]
             current_label = self.labels[idx]
             topk_inds = self.cache_nn_inds[idx, :100]
-            print(topk_inds)
             positive_inds = [ni for ni in self.label_indices[current_label] if ni != idx]
             negative_inds = [ni for ni in topk_inds if self.labels[ni] != current_label]
             # if len(positive_inds) == 0:
