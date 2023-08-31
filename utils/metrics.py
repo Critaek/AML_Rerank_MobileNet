@@ -196,6 +196,7 @@ def recall_at_ks_rerank(
         k_scores = torch.cat(k_scores, 0)
         print(f"k_scores size: {k_scores.size()}")
         scores.append(k_scores)
+        break
 
     # bsize = batch_size for reranking
     # Changed.
@@ -232,6 +233,9 @@ def recall_at_ks_rerank(
     #         closest_indices[i, j] = cache_nn_inds[i, indices[i, j]]
     # closest_indices = closest_indices.numpy()
     closest_indices = torch.gather(cache_nn_inds, -1, indices).numpy()   #predictions
+    print(closest_dists[0:20])
+    print(closest_indices[0:20])
+    print(ground_truth[0][0:20])
 
     #max_k = max(ks)
     #recalls = {}
