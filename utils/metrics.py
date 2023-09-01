@@ -185,7 +185,7 @@ def recall_at_ks_rerank(
     _, fsize, h, w = query_features.size()
     scores = []
 
-    gallery_batches = gallery_features.split(1500)
+    gallery_batches = gallery_features.split(10000)
 
     for query in tqdm(query_features):
         k_scores = []
@@ -195,6 +195,7 @@ def recall_at_ks_rerank(
             current_score = model(None, True, src_global=None, src_local=query_batch.to(device),
                                   tgt_global=None, tgt_local=gallery.to(device))
             k_scores.append(current_score.cpu())
+            print(f"k_scores len: {len(k_scores)}")
         k_scores = torch.cat(k_scores, 0)
         print(f"k_scores size: {k_scores.size()}")
         scores.append(k_scores)
