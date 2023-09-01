@@ -156,8 +156,6 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     database_utms = np.array([(path.split("@")[1], path.split("@")[2], 0) for path in database_paths]).astype(float)
     queries_utms = np.array([(path.split("@")[1], path.split("@")[2], 0) for path in queries_paths]).astype(float)
 
-    print(database_utms[0])
-
     # img, class_id
     class_id_database = [get__class_id(*m, M, alpha)
                             for m in database_utms]
