@@ -4,7 +4,7 @@ from tqdm import tqdm
 import numpy as np
 from utils import pickle_load
 
-
+import pickle
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -185,12 +185,14 @@ def recall_at_ks_rerank(
     _, fsize, h, w = query_features.size()
     scores = []
 
+    gallery_batches = gallery_features.split(1500)
+
     for query in tqdm(query_features):
-        query = torch.unsqueeze(query, 0)
         k_scores = []
-        for gallery in gallery_features:
-            gallery = torch.unsqueeze(gallery, 0)
-            current_score = model(None, True, src_global=None, src_local=query.to(device),
+        for gallery in gallery_batches:
+            gallery_size = gallery.size()[0]
+            query_batch = query.repeat(gallery_size, 1, 1, 1)
+            current_score = model(None, True, src_global=None, src_local=query_batch.to(device),
                                   tgt_global=None, tgt_local=gallery.to(device))
             k_scores.append(current_score.cpu())
         k_scores = torch.cat(k_scores, 0)
@@ -222,6 +224,10 @@ def recall_at_ks_rerank(
     print('time', total_time/num_samples)
     print(f"scores len before stack: {len(scores)}")
     scores = torch.stack(scores, 0)
+
+    with open("/content/drive/MyDrive/scores.pkl", "wb+") as f:
+        pickle.dump(scores, f)
+
     print(f"scores size after stack: {scores.size()}")
     closest_dists, indices = torch.sort(scores, dim=-1, descending=True)
     closest_dists = closest_dists.numpy()
