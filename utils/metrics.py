@@ -185,6 +185,8 @@ def recall_at_ks_rerank(
     _, fsize, h, w = query_features.size()
     scores = []
 
+    gallery_features = gallery_features[cache_nn_inds[0:100]]
+
     gallery_batches = gallery_features.split(10000)
 
     for query in tqdm(query_features):
